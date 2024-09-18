@@ -11,7 +11,7 @@
   </head>
 
   <body>
-    <canvas id="canvasOne" width="100" height="50"></canvas>
+    <canvas id="canvasOne" width="200" height="50"></canvas>
 
     <script type="text/javascript">
       // Retrieves the element by id
@@ -45,18 +45,35 @@
       context.font = '5px Arial';
       context.fillText('Michael', 0, 25);
 
+      // Red Circle
       context.beginPath();
       context.moveTo(45,25);
       context.arc(30, 20, 15, 0, 2 * Math.PI);
       context.strokeStyle = 'red';
       context.stroke();
 
+      // Blue Circle
       context.beginPath();
       context.moveTo(85,25);
       context.arc(70, 20, 15, 0, 2 * Math.PI);
       context.strokeStyle = 'blue';
       context.stroke();
-      
+
+      // Semi Circle
+      context.beginPath();
+      context.moveTo(130,25);
+      context.arc(115, 25, 15, 10, 2 * Math.PI);
+      context.strokeStyle = 'orange';
+      context.stroke();
+
+      // 3/4 of a Circle
+      context.beginPath();
+      context.moveTo(160,25);
+      context.arc(160, 25, 15, 90, 2 * Math.PI);
+      context.strokeStyle = 'pink';
+      context.stroke();
+      context.lineTo(160,25);
+      context.stroke();      
     </script>
   </body>
 </html>
