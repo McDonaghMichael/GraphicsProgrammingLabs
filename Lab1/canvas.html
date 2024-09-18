@@ -44,6 +44,18 @@
       context.fillStyle = 'red';
       context.font = '5px Arial';
       context.fillText('Michael', 0, 25);
+
+      context.beginPath();
+      context.moveTo(45,25);
+      context.arc(30, 20, 15, 0, 2 * Math.PI);
+      context.strokeStyle = 'red';
+      context.stroke();
+
+      context.beginPath();
+      context.moveTo(85,25);
+      context.arc(70, 20, 15, 0, 2 * Math.PI);
+      context.strokeStyle = 'blue';
+      context.stroke();
       
     </script>
   </body>
