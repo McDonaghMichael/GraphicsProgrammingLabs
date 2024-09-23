@@ -44,7 +44,7 @@
       }
 
 
-      var ball = new Ball(0,20,0,5,6,0);
+      var ball = new Ball(10,20,3,5,6,0);
 
       var yBorder = canvas.height - ball.radius;
       var xBorder = canvas.width - ball.radius;
@@ -53,18 +53,27 @@
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.beginPath();
-        ctx.arc(50, ball.yPosition, ball.radius, 0, 2 * Math.PI);
+        ctx.arc(ball.xPosition, ball.yPosition, ball.radius, 0, 2 * Math.PI);
         ctx.stroke();
         
         if(ball.yPosition >= yBorder){
           ball.yVelocity = ball.yVelocity * -1;
         }
+
+        if(ball.xPosition >= xBorder){
+          ball.xVelocity = ball.xVelocity * -1;
+        }
         
         if(ball.yPosition <= ball.radius){
           ball.yVelocity = ball.yVelocity * -1;
         }
+
+        if(ball.xPosition <= ball.radius){
+          ball.xVelocity = ball.xVelocity * -1;
+        }
         
         ball.yPosition += ball.yVelocity;
+        ball.xPosition += ball.xVelocity;
         
         window.requestAnimationFrame(repeatme);
       }
