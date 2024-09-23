@@ -21,7 +21,8 @@
 
   <body>
 
-    
+    <h1>Michael McDonagh</h1>
+    <h2>G00421944@atu.ie</h2>
 
     <canvas id="canvas-for-ball"></canvas>
 
@@ -56,10 +57,12 @@
         ctx.arc(ball.xPosition, ball.yPosition, ball.radius, 0, 2 * Math.PI);
         ctx.stroke();
         
+        // When the Y Position of the Ball is more than or equal ot the edge of the border
         if(ball.yPosition >= yBorder){
           ball.yVelocity = ball.yVelocity * -1;
         }
 
+        // When the X Position of the Ball is more than or equ
         if(ball.xPosition >= xBorder){
           ball.xVelocity = ball.xVelocity * -1;
         }
