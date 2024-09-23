@@ -24,8 +24,11 @@
       let context = canvas.getContext("2d");
 
       // Fills a rectangle
-      context.fillStyle = 'rgba(255,0,0,0.6)';
+      context.fillStyle = 'rgba(255,0,0)';
       context.fillRect(0, 0, 175, 100);
+
+      context.fillStyle = 'rgba(110, 95, 32, 0.4)';
+      context.fillRect(40, 70, 175, 100);
      
 
       // Makes new path
@@ -47,7 +50,7 @@
 
       // Red Circle
       context.beginPath();
-      context.arc(300, 200, 70, 0, 2 * Math.PI);
+      context.arc(400, 200, 70, 0, 2 * Math.PI);
       context.fillStyle = "rgba(240, 95, 32, 0.4)";
       context.fill();
       context.strokeStyle = 'red';
@@ -63,12 +66,12 @@
 
       // Semi Circle
       context.beginPath();
-      context.moveTo(145,150);
-      context.arc(145, 160, 75, 10, 2 * Math.PI);
+      context.moveTo(600,120);
+      context.arc(600, 140, 75, 10, 2 * Math.PI);
       context.strokeStyle = 'orange';
       context.fillStyle = "rgba(255, 248, 54, 0.4)";
       context.fill();
-      context.lineTo(145,150);
+      context.lineTo(600,120);
       context.stroke(); 
 
       // 3/4 of a Circle
