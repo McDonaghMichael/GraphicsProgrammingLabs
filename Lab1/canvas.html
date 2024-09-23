@@ -11,68 +11,78 @@
   </head>
 
   <body>
-    <canvas id="canvasOne" width="200" height="50"></canvas>
+    <canvas id="canvasOne" width="800" height="300"></canvas>
 
     <script type="text/javascript">
       // Retrieves the element by id
       let canvas = document.getElementById("canvasOne");
 
       // Set the canvas to be responsive
-      canvas.style.width = "50%";
+     
 
       // Gets the context of the canvas
       let context = canvas.getContext("2d");
 
       // Fills a rectangle
       context.fillStyle = 'rgba(255,0,0,0.6)';
-      context.fillRect(0, 0, 10, 10);
+      context.fillRect(0, 0, 175, 100);
      
 
       // Makes new path
       context.beginPath();
 
       // Moves pencil basically to this coordinate
-      context.moveTo(50,50);
+      context.moveTo(500,500);
 
       // Creates a line to these coordiantes
-      context.lineTo(50,0);
+      context.lineTo(500,0);
 
       // Adds the line to the coordinates
       context.stroke();
 
       context.beginPath();
       context.fillStyle = 'red';
-      context.font = '5px Arial';
-      context.fillText('Michael', 0, 25);
+      context.font = '55px Arial';
+      context.fillText('Michael', 0, 250);
 
       // Red Circle
       context.beginPath();
-      context.moveTo(45,25);
-      context.arc(30, 20, 15, 0, 2 * Math.PI);
+      context.moveTo(450,250);
+      context.arc(300, 200, 70, 0, 2 * Math.PI);
+      context.fillStyle = "rgba(240, 95, 32, 0.4)";
+      context.fill();
       context.strokeStyle = 'red';
       context.stroke();
 
       // Blue Circle
       context.beginPath();
-      context.moveTo(85,25);
-      context.arc(70, 20, 15, 0, 2 * Math.PI);
+      context.moveTo(850,250);
+      context.arc(700, 200, 70, 0, 2 * Math.PI);
       context.strokeStyle = 'blue';
+      context.fillStyle = "rgba(40, 67, 219, 0.4)";
+      context.fill();
+      context.moveTo(850,250);
       context.stroke();
 
       // Semi Circle
       context.beginPath();
-      context.moveTo(130,25);
-      context.arc(115, 25, 15, 10, 2 * Math.PI);
+      context.moveTo(145,150);
+      context.arc(145, 160, 75, 10, 2 * Math.PI);
       context.strokeStyle = 'orange';
-      context.stroke();
+      context.fillStyle = "rgba(255, 248, 54, 0.4)";
+      context.fill();
+      context.lineTo(145,150);
+      context.stroke(); 
 
       // 3/4 of a Circle
       context.beginPath();
-      context.moveTo(160,25);
-      context.arc(160, 25, 15, 90, 2 * Math.PI);
+      context.moveTo(300,90);
+      context.arc(300, 90, 70, 90, 2 * Math.PI);
+      context.fillStyle = "rgba(245, 40, 145, 0.4)";
+      context.fill();
       context.strokeStyle = 'pink';
       context.stroke();
-      context.lineTo(160,25);
+      context.lineTo(300,90);
       context.stroke();      
     </script>
   </body>

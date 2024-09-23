@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+
+<html>
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Canvas</title>
+
+    <style type="text/css">
+      body {
+          background-color: white;
+      }
+
+      #canvas-for-ball {
+        border: 2px solid black;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    
+
+    <canvas id="canvas-for-ball"></canvas>
+
+    <script type="text/javascript">
+      var canvas = document.getElementById("canvas-for-ball");
+      var ctx = canvas.getContext("2d");
+
+      class Ball {
+        constructor(xPosition, yPosition, xVelocity, yVelocity, radius, gravity){
+          this.xPosition = xPosition;
+          this.yPosition = yPosition;
+          this.xVelocity = xVelocity;
+          this.yVelocity = yVelocity;
+          this.radius = radius;
+          this.gravity = gravity;
+        }
+
+    
+
+      }
+
+
+      var ball = new Ball(0,20,0,5,6,0);
+
+      var yBorder = canvas.height - ball.radius;
+      var xBorder = canvas.width - ball.radius;
+
+      function repeatme() {
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.beginPath();
+        ctx.arc(50, ball.yPosition, ball.radius, 0, 2 * Math.PI);
+        ctx.stroke();
+        
+        if(ball.yPosition >= yBorder){
+          ball.yVelocity = ball.yVelocity * -1;
+        }
+        
+        if(ball.yPosition <= ball.radius){
+          ball.yVelocity = ball.yVelocity * -1;
+        }
+        
+        ball.yPosition += ball.yVelocity;
+        
+        window.requestAnimationFrame(repeatme);
+      }
+      
+      repeatme();
+    </script>
+
+  </body>
+
+</html>
