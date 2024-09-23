@@ -44,6 +44,19 @@
           ctx.clearRect(0, 0, canvas.width, canvas.height);
           ctx.beginPath();
           ctx.arc(ball.xPosition, ball.yPosition, ball.radius, 0, 2 * Math.PI);
+          ctx.moveTo(ball.xPosition, ball.yPosition);
+          ctx.lineTo(ball.xPosition, ball.yPosition - ball.radius);
+          ctx.lineTo(ball.xPosition, ball.yPosition + ball.radius);
+          ctx.stroke();
+          
+          // Draws line from center to bottom right edge
+          ctx.moveTo(ball.xPosition + ball.radius, ball.yPosition + ball.radius - 20);
+          ctx.lineTo(ball.xPosition, ball.yPosition - 5);
+          ctx.stroke();
+
+          // Draws line from cetner to bottom left edge
+          ctx.moveTo(ball.xPosition - ball.radius, ball.yPosition + ball.radius - 20);
+          ctx.lineTo(ball.xPosition, ball.yPosition - 5);
           ctx.stroke();
         }
 
@@ -73,8 +86,7 @@
 
       }
 
-
-      var ball = new Ball(10,20,3,5,6,0);
+      var ball = new Ball(40,40,3,5,30,0);
 
       var yBorder = canvas.height - ball.radius;
       var xBorder = canvas.width - ball.radius;
@@ -82,8 +94,6 @@
       function repeatme() {
 
         ball.draw(ctx);
-        
-        
         
         ball.move();
         
