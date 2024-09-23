@@ -66,18 +66,16 @@
 
       // Semi Circle
       context.beginPath();
-      context.moveTo(600,120);
-      context.arc(600, 140, 75, 10, 2 * Math.PI);
+      context.arc(600, 90, 75, 0,Math.PI);
       context.strokeStyle = 'orange';
       context.fillStyle = "rgba(255, 248, 54, 0.4)";
       context.fill();
-      context.lineTo(600,120);
       context.stroke(); 
 
       // 3/4 of a Circle
       context.beginPath();
       context.moveTo(300,90);
-      context.arc(300, 90, 70, 90, 2 * Math.PI);
+      context.arc(300, 90, 70, 0, 1.5 * Math.PI);
       context.fillStyle = "rgba(245, 40, 145, 0.4)";
       context.fill();
       context.strokeStyle = 'pink';

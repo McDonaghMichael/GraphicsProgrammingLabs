@@ -48,23 +48,7 @@
         }
 
         move(){
-          ball.yPosition += ball.yVelocity;
-          ball.xPosition += ball.xVelocity;
-        }
-
-      }
-
-
-      var ball = new Ball(10,20,3,5,6,0);
-
-      var yBorder = canvas.height - ball.radius;
-      var xBorder = canvas.width - ball.radius;
-
-      function repeatme() {
-
-        ball.draw(ctx);
-        
-        // When the Y Position of the Ball is more than or equal ot the edge of the border
+          // When the Y Position of the Ball is more than or equal ot the edge of the border
         if(ball.yPosition >= yBorder){
           ball.yVelocity = ball.yVelocity * -1;
         }
@@ -83,6 +67,23 @@
         if(ball.xPosition <= ball.radius){
           ball.xVelocity = ball.xVelocity * -1;
         }
+          ball.yPosition += ball.yVelocity;
+          ball.xPosition += ball.xVelocity;
+        }
+
+      }
+
+
+      var ball = new Ball(10,20,3,5,6,0);
+
+      var yBorder = canvas.height - ball.radius;
+      var xBorder = canvas.width - ball.radius;
+
+      function repeatme() {
+
+        ball.draw(ctx);
+        
+        
         
         ball.move();
         
