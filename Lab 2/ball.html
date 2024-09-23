@@ -40,7 +40,17 @@
           this.gravity = gravity;
         }
 
-    
+        draw(ctx){
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.beginPath();
+          ctx.arc(ball.xPosition, ball.yPosition, ball.radius, 0, 2 * Math.PI);
+          ctx.stroke();
+        }
+
+        move(){
+          ball.yPosition += ball.yVelocity;
+          ball.xPosition += ball.xVelocity;
+        }
 
       }
 
@@ -52,31 +62,29 @@
 
       function repeatme() {
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.beginPath();
-        ctx.arc(ball.xPosition, ball.yPosition, ball.radius, 0, 2 * Math.PI);
-        ctx.stroke();
+        ball.draw(ctx);
         
         // When the Y Position of the Ball is more than or equal ot the edge of the border
         if(ball.yPosition >= yBorder){
           ball.yVelocity = ball.yVelocity * -1;
         }
 
-        // When the X Position of the Ball is more than or equ
+        // When the X Position of the Ball is more than or equal to the edge of the border
         if(ball.xPosition >= xBorder){
           ball.xVelocity = ball.xVelocity * -1;
         }
         
+        // This will check if the border of the ball has hit a Y Coordinate edge
         if(ball.yPosition <= ball.radius){
           ball.yVelocity = ball.yVelocity * -1;
         }
 
+        // This will check if the border of the ball has hit a X Coordinate edge
         if(ball.xPosition <= ball.radius){
           ball.xVelocity = ball.xVelocity * -1;
         }
         
-        ball.yPosition += ball.yVelocity;
-        ball.xPosition += ball.xVelocity;
+        ball.move();
         
         window.requestAnimationFrame(repeatme);
       }
