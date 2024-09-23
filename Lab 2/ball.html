@@ -86,17 +86,14 @@
 
       }
 
-      var ball = new Ball(40,40,3,5,30,0);
+      var ball = new Ball(40,40,3,3,30,0);
 
       var yBorder = canvas.height - ball.radius;
       var xBorder = canvas.width - ball.radius;
 
       function repeatme() {
-
         ball.draw(ctx);
-        
         ball.move();
-        
         window.requestAnimationFrame(repeatme);
       }
       
