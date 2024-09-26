@@ -48,16 +48,7 @@
           ctx.lineTo(ball.xPosition, ball.yPosition - ball.radius);
           ctx.lineTo(ball.xPosition, ball.yPosition + ball.radius);
           ctx.stroke();
-          
-          // Draws line from center to bottom right edge
-          ctx.moveTo(ball.xPosition + ball.radius, ball.yPosition + ball.radius - 20);
-          ctx.lineTo(ball.xPosition, ball.yPosition - 5);
-          ctx.stroke();
 
-          // Draws line from cetner to bottom left edge
-          ctx.moveTo(ball.xPosition - ball.radius, ball.yPosition + ball.radius - 20);
-          ctx.lineTo(ball.xPosition, ball.yPosition - 5);
-          ctx.stroke();
         }
 
         move(){
@@ -84,6 +75,45 @@
           ball.xPosition += ball.xVelocity;
         }
 
+        drawPeaceSign() {
+          ctx.beginPath();
+          ctx.arc(ball.xPosition, ball.yPosition, ball.radius, 0, Math.PI * 2);
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(ball.xPosition, ball.yPosition - ball.radius);
+          ctx.lineTo(ball.xPosition, ball.yPosition);
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(ball.xPosition, ball.yPosition + ball.radius);
+          ctx.lineTo(ball.xPosition, ball.yPosition);
+          ctx.stroke();
+
+          // Draw the two diagonal lines
+          // Polar coordinates for -45 degrees (bottom left)
+          let angle1 = (3 * Math.PI) / 4;
+          let x1 = ball.xPosition + ball.radius * Math.cos(angle1);
+          let y1 = ball.yPosition + ball.radius * Math.sin(angle1);
+
+          // Polar coordinates for -135 degrees (bottom right)
+          let angle2 = (1 * Math.PI) / 4;
+          let x2 = ball.xPosition + ball.radius * Math.cos(angle2);
+          let y2 = ball.yPosition + ball.radius * Math.sin(angle2);
+
+          // Draw left diagonal line
+          ctx.beginPath();
+          ctx.moveTo(ball.xPosition, ball.yPosition); // Start at center of ball
+          ctx.lineTo(x1, y1); // Move to left diagonal end
+          ctx.stroke();
+
+          // Draw right diagonal line
+          ctx.beginPath();
+          ctx.moveTo(ball.xPosition, ball.yPosition); // Start at center of ball
+          ctx.lineTo(x2, y2); // Move to right diagonal end
+          ctx.stroke();
+        }
+
       }
 
       var ball = new Ball(40,40,3,3,30,0);
@@ -94,6 +124,7 @@
       function repeatme() {
         ball.draw(ctx);
         ball.move();
+        ball.drawPeaceSign();
         window.requestAnimationFrame(repeatme);
       }
       
