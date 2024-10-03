@@ -21,19 +21,15 @@
 
     <script type="text/javascript">
       var noClicks = 0;
-      
-      // Gets a handle to the element with id canvasOne.
+
       var canvas = document.getElementById("canvas-for-ball");
-      // Get a 2D context for the canvas.
       var ctx = canvas.getContext("2d");
-      // Make the fill style red.
       ctx.fillStyle = "rgb(255, 0, 0)";
       
       canvas.addEventListener("click", function(event) { 
         ctx.beginPath();
-        ctx.arc(50, 50, 6, 0, 2 * Math.PI);
+        ctx.arc(event.clientX, event.clientY, 6, 0, 2 * Math.PI);
         ctx.fill();
-        
         noClicks += 1;
         console.log(noClicks);
         console.log(event);
