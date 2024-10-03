@@ -20,12 +20,34 @@
     <canvas id="canvas-for-ball"></canvas>
 
     <script type="text/javascript">
-		// Gets a handle to the element with id canvasOne.
 		var canvas = document.getElementById("canvas-for-ball");
-		// Get a 2D context for the canvas.
 		var ctx = canvas.getContext("2d");
-		// Make the fill style red.
 		ctx.fillStyle = "rgb(255, 0, 0)";
+
+        class Paddle {
+
+          constructor(xPosition, yPosition, width, height){
+            this.xPosition = xPosition;
+            this.yPosition = yPosition;
+            this.width = width;
+            this.height = height;
+
+          }
+
+          draw(){
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillRect(this.xPosition, this.yPosition, this.width, this.height);
+            ctx.save();
+          }
+
+          move(){
+            ctx.fillRect(this.xPosition, this.yPosition + 10, this.width, this.height)
+          }
+
+        }
+
+        var paddleOne = new Paddle(50,50,100,100);
+        paddleOne.draw();
 
 		// Add a Javascript event listener to the keypress event.
 		window.addEventListener("keypress", function(event) { 
@@ -37,8 +59,9 @@
 		$(document.body).on('keydown', function(e) {
 			console.log(e.which);
 			switch (e.which) {
-			// key code for left arrow
+
 			case 37:
+              paddleOne.move();
 				console.log('left arrow key pressed!');
 				break;
 
@@ -48,6 +71,11 @@
 				break;
 			}
 		});
+
+
+
+
+
     </script>
 
   </body>
