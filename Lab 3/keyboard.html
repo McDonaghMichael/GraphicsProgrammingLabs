@@ -1,95 +1,95 @@
 <!DOCTYPE html>
-
 <html>
 
-<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
-  <head>
-    <meta charset="UTF-8">
-    <title>Canvas</title>
+<head>
+  <meta charset="UTF-8">
+  <title>Canvas</title>
+  <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+  <style type="text/css">
+    canvas {
+      border: 1px solid grey;
+    }
+  </style>
+</head>
 
-    <style type="text/css">
-		canvas {
-			border: 1px solid grey; 
-		}
-    </style>
+<body>
 
-  </head>
+<canvas id="canvas-for-ball" width="400" height="300"></canvas>
 
-  <body>
+<script type="text/javascript">
+  const canvas = document.getElementById("canvas-for-ball");
+  const ctx = canvas.getContext("2d");
 
-    <canvas id="canvas-for-ball"></canvas>
+  class Paddle {
+    INCREASE_Y = 0;
+    DECREASE_Y = 1;
 
-    <script type="text/javascript">
+    constructor(xPosition, yPosition, width, height) {
+      this.xPosition = xPosition;
+      this.yPosition = yPosition;
+      this.width = width;
+      this.height = height;
+      this.yVelocity = 10;
+    }
 
-      const canvas = document.getElementById("canvas-for-ball");
-      const ctx = canvas.getContext("2d");
-      ctx.fillStyle = "rgb(255, 0, 0)";
+    draw() {
+      ctx.fillRect(this.xPosition, this.yPosition, this.width, this.height);
+    }
+
+    move(direction) {
+      switch (direction) {
+        case this.INCREASE_Y:
+          if (this.yPosition + this.yVelocity >= canvas.height - this.height) return;
+          this.yPosition += this.yVelocity;
+          break;
+        case this.DECREASE_Y:
+          if (this.yPosition - this.yVelocity <= 0) return;
+          this.yPosition -= this.yVelocity;
+          break;
+      }
+
+      ctx.clearRect(this.xPosition, this.yPosition - this.yVelocity, this.width, this.height + this.yVelocity);
+      ctx.clearRect(this.xPosition, this.yPosition + this.yVelocity, this.width, this.height + this.yVelocity);
+      this.draw();
+    }
+  }
+
+  const paddleOne = new Paddle(50, 50, 20, 60);
+  const paddleTwo = new Paddle(350, 50, 20, 60);
+
+  paddleOne.draw();
+  paddleTwo.draw();
+
+  $(document.body).on('keydown', function (e) {
+    switch (e.which) {
+      case 40:
+        paddleOne.move(paddleOne.INCREASE_Y);
+        break;
+      case 38:
+        paddleOne.move(paddleOne.DECREASE_Y);
+        break;
+      case 83:
+        paddleTwo.move(paddleTwo.INCREASE_Y);
+        break;
+      case 87:
+        paddleTwo.move(paddleTwo.DECREASE_Y);
+        break;
+    }
+  });
 
 
+  canvas.addEventListener("mousemove", function (event) {
+    let y = event.clientY - canvas.getBoundingClientRect().top;
+    if (y >= 0 && y <= canvas.height - paddleOne.height) {
+      ctx.clearRect(paddleOne.xPosition, paddleOne.yPosition, paddleOne.width, paddleOne.height);
+      paddleOne.yPosition = y;
+      paddleOne.draw();
+      paddleTwo.draw();
+    }
+  });
 
-        class Paddle {
+</script>
 
-          INCREASE_Y = 0;
-          DECREASE_Y = 1;
-
-          constructor(xPosition, yPosition, width, height){
-            this.xPosition = xPosition;
-            this.yPosition = yPosition;
-            this.width = width;
-            this.height = height;
-            this.yVelocity = 10;
-          }
-
-          draw(){
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillRect(this.xPosition, this.yPosition, this.width, this.height);
-            ctx.save();
-          }
-
-          move(direction){
-            switch(direction){
-              case this.INCREASE_Y:
-                if(this.yPosition + this.yVelocity >= canvas.height - this.height) return;
-                this.yPosition += this.yVelocity;
-                break;
-              case this.DECREASE_Y:
-                if(this.yPosition - this.yVelocity <= 0) return;
-
-                this.yPosition -= this.yVelocity;
-                break;
-            }
-            this.draw();
-          }
-        }
-
-        const paddleOne = new Paddle(50, 50, 20, 60);
-        paddleOne.draw();
-
-		window.addEventListener("keypress", function(event) {
-			console.log(event);
-		});
-
-      window.addEventListener("mousemove", function(event) {
-        let x = event.clientX;
-        let y = event.clientY;
-        if(canvas.height - y - paddleOne.height <= 0) return;
-        if(y <= canvas.height || (canvas.height - y) <= 0) paddleOne.yPosition = y;
-        paddleOne.draw();
-      });
-
-		$(document.body).on('keydown', function(e) {
-			switch (e.which) {
-			case 40:
-              paddleOne.move(paddleOne.INCREASE_Y);
-				break;
-			case 38:
-              paddleOne.move(paddleOne.DECREASE_Y);
-				break;
-			}
-		});
-
-    </script>
-
-  </body>
+</body>
 
 </html>
