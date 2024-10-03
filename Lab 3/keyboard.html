@@ -21,9 +21,11 @@
 
     <script type="text/javascript">
 
-		var canvas = document.getElementById("canvas-for-ball");
-		var ctx = canvas.getContext("2d");
-		ctx.fillStyle = "rgb(255, 0, 0)";
+      const canvas = document.getElementById("canvas-for-ball");
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "rgb(255, 0, 0)";
+
+
 
         class Paddle {
 
@@ -60,19 +62,27 @@
           }
         }
 
-        var paddleOne = new Paddle(50,50,20,60);
+        const paddleOne = new Paddle(50, 50, 20, 60);
         paddleOne.draw();
 
 		window.addEventListener("keypress", function(event) {
 			console.log(event);
 		});
 
+      window.addEventListener("mousemove", function(event) {
+        let x = event.clientX;
+        let y = event.clientY;
+        if(canvas.height - y - paddleOne.height <= 0) return;
+        if(y <= canvas.height || (canvas.height - y) <= 0) paddleOne.yPosition = y;
+        paddleOne.draw();
+      });
+
 		$(document.body).on('keydown', function(e) {
 			switch (e.which) {
-			case 37:
+			case 40:
               paddleOne.move(paddleOne.INCREASE_Y);
 				break;
-			case 39:
+			case 38:
               paddleOne.move(paddleOne.DECREASE_Y);
 				break;
 			}
