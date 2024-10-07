@@ -18,6 +18,8 @@
 
 <body>
 
+  <h1>Michael McDonagh</h1>
+  <h3>G00421944@atu.ie</h3>
 <canvas id="canvas-for-ball" width="400" height="300" style="z-index: 2"></canvas>
 <canvas id="canvas-for-ball-overlay" width="400" height="300" style="position: absolute; top: 0; left: 0;"></canvas>
 
@@ -71,8 +73,8 @@
       this.yVelocity = yVelocity;
       this.radius = radius;
       this.rotation = rotation;
+      this.bounce = 0.9;
       this.spinspeed = 1;
-      this.distanceRemainder = 1;
     }
 
     getMaxHeight(){
@@ -138,11 +140,16 @@
 
     }
     move(){
+
+      ball.yVelocity += 0.9;
+
       // Bottom of canvas area
       if(ball.yPosition >= yBorder){
         ball.yVelocity = ball.yVelocity * -1;
-        this.distanceRemainder *= 0.9;
-        console.log(this.distanceRemainder);
+        ball.yVelocity += 0.9;
+        this.yVelocity = this.yVelocity * this.bounce;
+        this.xVelocity = this.xVelocity * this.bounce;
+        this.spinspeed *= this.bounce;
 
       }
 
@@ -150,33 +157,23 @@
       if(ball.xPosition >= xBorder){
         ball.xVelocity = ball.xVelocity * -1;
         ball.rotation += 5;
+
       }
 
       // Top of Canvas
       if(ball.yPosition <= ball.radius){
         ball.yVelocity = ball.yVelocity * -1;
+        ball.yVelocity -= 0.9;
         ball.rotation += 5;
-        console.log("Canvas Height" + this.getMaxHeight() + " with ball pos " + ((ball.yPosition - 300) * -1));
-      }
-
-      if(((ball.yPosition - 300) * -1) >= this.getMaxHeight()){
-        if(((ball.yPosition - 300) * -1) >= 30){
-          if(ball.yVelocity < 0){
-            ball.yVelocity = (ball.yVelocity * -1) * 0.999;
-          }
-
-        }
-
       }
 
       // Left of canvas
       if(ball.xPosition <= ball.radius){
         ball.xVelocity = ball.xVelocity * -1;
-        console.log("test");
       }
+
       ball.yPosition += ball.yVelocity;
       ball.xPosition += ball.xVelocity;
-      //ball.rotation += 5;
     }}
 
   const paddleOne = new Paddle(50, 50, 20, 60);
