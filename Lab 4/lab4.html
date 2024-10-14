@@ -209,7 +209,12 @@
 
     function detectCollisions(ball, padOne, padTwo) {
         if(getDistance(ball.xPosition, ball.yPosition, padOne.xPosition, padOne.yPosition) <= padOne.radius * 2){
-            ball.xVelocity = Math.abs(ball.xVelocity);
+            ball.xVelocity = ball.xVelocity * -1;
+            ball.yVelocity = ball.yVelocity * -1;
+        }
+        if(getDistance(ball.xPosition, ball.yPosition, paddleTwo.xPosition, paddleTwo.yPosition) <= paddleTwo.radius * 2){
+            ball.xVelocity = ball.xVelocity * -1;
+            ball.yVelocity = ball.yVelocity * -1;
         }
     }
 
