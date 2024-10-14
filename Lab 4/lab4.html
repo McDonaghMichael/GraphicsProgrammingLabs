@@ -51,10 +51,6 @@
 
     const balls = [];
 
-    
-
-    
-
     class Paddle {
         INCREASE_Y = 0;
         DECREASE_Y = 1;
@@ -132,6 +128,12 @@
         draw(overlayCtx) {
             overlayCtx.beginPath();
             overlayCtx.arc(this.xPosition, this.yPosition, this.radius, 0, 2 * Math.PI);
+            var r = Math.random() * 255;
+            var g = Math.random() * 255;
+            var b = Math.random() * 255;
+            overlayCtx.fillStyle = `rgba(${r}, ${g}, ${b}, ${1})`;
+
+            overlayCtx.fill();
             overlayCtx.stroke();
             overlayCtx.save();
 
@@ -246,10 +248,15 @@
                 paddleTwo.move(paddleTwo.DECREASE_Y);
                 break;
             case 81:
+            balls.forEach(ball => {
                 ball.spinspeed -= 1;
+            });
+                
                 break;
             case 69:
+            balls.forEach(ball => {
                 ball.spinspeed += 1;
+            });
                 break;
         }
     });
@@ -301,9 +308,9 @@
             paddleOne.draw();
             paddleTwo.draw();
             overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
-            balls.forEach(ball => {
-          ball.draw();
-        });
+                balls.forEach(ball => {
+            ball.draw();
+            });
         }
     });
 
