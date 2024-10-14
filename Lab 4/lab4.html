@@ -78,7 +78,7 @@
     }
 
     class Ball {
-        constructor(xPosition, yPosition, xVelocity, yVelocity, radius, rotation){
+        constructor(xPosition, yPosition, xVelocity, yVelocity, radius, rotation) {
             this.xPosition = xPosition;
             this.yPosition = yPosition;
             this.xVelocity = xVelocity;
@@ -89,13 +89,13 @@
             this.spinspeed = 1;
         }
 
-        getMaxHeight(){
+        getMaxHeight() {
             return overlayCanvas.height * this.distanceRemainder;
         }
 
 
         draw(overlayCtx) {
-            overlayCtx.clearRect(0,0,overlayCanvas.width,overlayCanvas.height);
+            overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
             overlayCtx.beginPath();
             overlayCtx.arc(ball.xPosition, ball.yPosition, ball.radius, 0, 2 * Math.PI);
             overlayCtx.stroke();
@@ -106,7 +106,7 @@
 
         }
 
-        drawPeaceSymbol(){
+        drawPeaceSymbol() {
 
 
             /*
@@ -147,48 +147,37 @@
             this.rotation += this.spinspeed;
 
 
-
-
-
         }
-        move(){
 
-            ball.yVelocity += 0.9;
+        move() {
 
-            // Bottom of canvas area
-            if(ball.yPosition >= yBorder){
-                ball.yVelocity = ball.yVelocity * -1;
-                ball.yVelocity += 0.9;
-                this.yVelocity = this.yVelocity * this.bounce;
-                this.xVelocity = this.xVelocity * this.bounce;
-                this.spinspeed *= this.bounce;
+            this.yVelocity += 0.9;
 
+            if (this.yPosition + this.radius >= yBorder) {
+                this.yVelocity = -Math.abs(this.yVelocity) * this.bounce;
+                this.yPosition = yBorder - this.radius;
             }
 
-            // Right of Canvas
-            if(ball.xPosition >= xBorder){
-                ball.xVelocity = ball.xVelocity * -1;
-                ball.rotation += 5;
-
+            if (this.xPosition + this.radius >= xBorder) {
+                this.xVelocity = -Math.abs(this.xVelocity);
+                this.xPosition = xBorder - this.radius;
             }
 
-            // Top of Canvas
-            if(ball.yPosition <= ball.radius){
-                ball.yVelocity = ball.yVelocity * -1;
-                ball.yVelocity -= 0.9;
-                ball.rotation += 5;
+            if (this.yPosition - this.radius <= 0) {
+                this.yVelocity = Math.abs(this.yVelocity);
+                this.yPosition = this.radius;
             }
 
-            // Left of canvas
-            if(ball.xPosition <= ball.radius){
-                ball.xVelocity = ball.xVelocity * -1;
+            if (this.xPosition - this.radius <= 0) {
+                this.xVelocity = Math.abs(this.xVelocity);
+                this.xPosition = this.radius;
             }
 
-            ball.yPosition += ball.yVelocity;
-            ball.xPosition += ball.xVelocity;
-        }}
-
-    const paddleOne = new Paddle(50, 50, 20);
+            this.yPosition += this.yVelocity;
+            this.xPosition += this.xVelocity;
+        }
+    }
+        const paddleOne = new Paddle(50, 50, 20);
     const paddleTwo = new Paddle(350, 50, 20);
 
     paddleOne.draw();
@@ -218,6 +207,20 @@
     });
 
 
+    function detectCollisions(ball, padOne, padTwo) {
+        if(getDistance(ball.xPosition, ball.yPosition, padOne.xPosition, padOne.yPosition) <= ball.radius + padOne.width / 2){
+            console.log("YES");
+        }
+    }
+
+    function getDistance(x1,y1,x2,y2) {
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+
+
     window.addEventListener("mousemove", function (event) {
         let y = event.clientY;
         if (y >= 0 && y <= canvas.height - paddleOne.radius) {
@@ -243,7 +246,8 @@
 
     function repeatme() {
         ball.draw(overlayCtx);
-        ball.move();
+        ball.move()
+        detectCollisions(ball, paddleOne, paddleTwo);
         window.requestAnimationFrame(repeatme);
     }
 
