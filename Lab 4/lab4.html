@@ -208,8 +208,8 @@
 
 
     function detectCollisions(ball, padOne, padTwo) {
-        if(getDistance(ball.xPosition, ball.yPosition, padOne.xPosition, padOne.yPosition) <= ball.radius + padOne.width / 2){
-            console.log("YES");
+        if(getDistance(ball.xPosition, ball.yPosition, padOne.xPosition, padOne.yPosition) <= padOne.radius * 2){
+            ball.xVelocity = Math.abs(ball.xVelocity);
         }
     }
 
