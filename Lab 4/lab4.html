@@ -20,6 +20,8 @@
 
 <h1>Michael McDonagh</h1>
 <h3>G00421944@atu.ie</h3>
+<p id="paddleOneScore">P1 Score: 0</p>
+<p id="paddleTwoScore">P2 Score: 0</p>
 <canvas id="canvas-for-ball" width="400" height="300" style="z-index: 2"></canvas>
 <canvas id="canvas-for-ball-overlay" width="400" height="300" style="position: absolute; top: 0; left: 0;"></canvas>
 
@@ -40,11 +42,11 @@
             this.yPosition = yPosition;
             this.radius = radius;
             this.yVelocity = 10;
+            this.gameScore = 0;
 
         }
 
         draw() {
-           // ctx.fillRect(this.xPosition, this.yPosition, this.width, this.height);
             ctx.beginPath();
             ctx.arc(this.xPosition, this.yPosition, this.radius, 0, Math.PI * 2, false);
             ctx.stroke();
@@ -75,7 +77,19 @@
 
             this.draw();
         }
+
+        score(incrementation){
+            let newScore = this.gameScore + incrementation
+            if(newScore < 0){
+                this.gameScore = 0;
+                return;
+            }
+            this.gameScore += incrementation;
+        }
     }
+
+    const paddleOne = new Paddle(50, 50, 20);
+    const paddleTwo = new Paddle(350, 50, 20);
 
     class Ball {
         constructor(xPosition, yPosition, xVelocity, yVelocity, radius, rotation) {
@@ -88,11 +102,6 @@
             this.bounce = 0.9;
             this.spinspeed = 1;
         }
-
-        getMaxHeight() {
-            return overlayCanvas.height * this.distanceRemainder;
-        }
-
 
         draw(overlayCtx) {
             overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
@@ -153,35 +162,44 @@
 
             this.yVelocity += 0.9;
 
+            // Bottom
             if (this.yPosition + this.radius >= yBorder) {
                 this.yVelocity = -Math.abs(this.yVelocity) * this.bounce;
                 this.yPosition = yBorder - this.radius;
             }
 
+            // Right
             if (this.xPosition + this.radius >= xBorder) {
                 this.xVelocity = -Math.abs(this.xVelocity);
                 this.xPosition = xBorder - this.radius;
+                paddleOne.score(1);
+                paddleTwo.score(-1);
             }
 
+            // Top
             if (this.yPosition - this.radius <= 0) {
                 this.yVelocity = Math.abs(this.yVelocity);
                 this.yPosition = this.radius;
             }
 
+            // Left
             if (this.xPosition - this.radius <= 0) {
                 this.xVelocity = Math.abs(this.xVelocity);
                 this.xPosition = this.radius;
+                paddleTwo.score(1);
+                paddleOne.score(-1);
             }
 
             this.yPosition += this.yVelocity;
             this.xPosition += this.xVelocity;
         }
     }
-        const paddleOne = new Paddle(50, 50, 20);
-    const paddleTwo = new Paddle(350, 50, 20);
+
 
     paddleOne.draw();
     paddleTwo.draw();
+
+
 
     $(document.body).on('keydown', function (e) {
         switch (e.which) {
@@ -212,7 +230,7 @@
             ball.xVelocity = ball.xVelocity * -1;
             ball.yVelocity = ball.yVelocity * -1;
         }
-        if(getDistance(ball.xPosition, ball.yPosition, paddleTwo.xPosition, paddleTwo.yPosition) <= paddleTwo.radius * 2){
+        if(getDistance(ball.xPosition, ball.yPosition, padTwo.xPosition, padTwo.yPosition) <= padTwo.radius * 2){
             ball.xVelocity = ball.xVelocity * -1;
             ball.yVelocity = ball.yVelocity * -1;
         }
@@ -252,6 +270,9 @@
     function repeatme() {
         ball.draw(overlayCtx);
         ball.move()
+        console.log(paddleOne.gameScore);
+        document.getElementById("paddleOneScore").innerText = "P1 Score: " + paddleOne.gameScore;
+        document.getElementById("paddleTwoScore").innerText = "P2 Score: " + paddleTwo.gameScore;
         detectCollisions(ball, paddleOne, paddleTwo);
         window.requestAnimationFrame(repeatme);
     }
