@@ -126,13 +126,13 @@
         }
 
         draw(overlayCtx) {
+            if(overlayCtx == null) return;
             overlayCtx.beginPath();
             overlayCtx.arc(this.xPosition, this.yPosition, this.radius, 0, 2 * Math.PI);
             var r = Math.random() * 255;
             var g = Math.random() * 255;
             var b = Math.random() * 255;
             overlayCtx.fillStyle = `rgba(${r}, ${g}, ${b}, ${1})`;
-
             overlayCtx.fill();
             overlayCtx.stroke();
             overlayCtx.save();
@@ -266,7 +266,7 @@
      *  The detectCollisions method simply checks if the distance between the ball and paddle one or two
      *  is less than the size of the paddle diameter
      */
-    function detectCollisions(ball, padOne, padTwo) {
+     function detectCollisions(ball, padOne, padTwo) {
         if(getDistance(ball.xPosition, ball.yPosition, padOne.xPosition, padOne.yPosition) <= padOne.radius * 2){
             ball.xVelocity = ball.xVelocity * -1;
             ball.yVelocity = ball.yVelocity * -1;
@@ -284,6 +284,24 @@
             }, 750);
         }
     }
+
+    function detectCollisionsWithMouse(ball, x,y) {
+        if(getDistance(ball.xPosition, ball.yPosition,x, y) <= ball.radius * 2){
+            console.log("HIT BALL");
+            removeElement(balls, ball);
+            return true;
+        }
+    return false;
+    }
+
+    function removeElement(array, elementToRemove) {
+    array.forEach((item, index) => {
+        if (item === elementToRemove) {
+            array.splice(index, 1);
+        }
+    });
+    return array;
+}
 
     // Returns the distance between two points
     function getDistance(x1,y1,x2,y2) {
@@ -314,11 +332,24 @@
         }
     });
 
+    window.addEventListener("click", function(event) { 
+        let y = event.clientY;
+        let x = event.clientX;
+        if (y >= 0 && y <= canvas.height && x >= 0 && x <= canvas.width) {
+            balls.forEach(ball => {
+            if(detectCollisionsWithMouse(ball, x, y)){
+
+            }
+            });
+        }
+      });
+
     
     var yBorder = canvas.height - 15;
     var xBorder = canvas.width - 15;
 
     function repeatme() {
+    
         overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
         balls.forEach(ball => {
           ball.draw(overlayCtx);
