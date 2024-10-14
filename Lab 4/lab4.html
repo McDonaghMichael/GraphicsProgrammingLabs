@@ -35,22 +35,35 @@
         INCREASE_Y = 0;
         DECREASE_Y = 1;
 
-        constructor(xPosition, yPosition, width, height) {
+        constructor(xPosition, yPosition, radius) {
             this.xPosition = xPosition;
             this.yPosition = yPosition;
-            this.width = width;
-            this.height = height;
+            this.radius = radius;
             this.yVelocity = 10;
+
         }
 
         draw() {
-            ctx.fillRect(this.xPosition, this.yPosition, this.width, this.height);
+           // ctx.fillRect(this.xPosition, this.yPosition, this.width, this.height);
+            ctx.beginPath();
+            ctx.arc(this.xPosition, this.yPosition, this.radius, 0, Math.PI * 2, false);
+            ctx.stroke();
         }
 
         move(direction) {
+
+            const padding = 4;
+            ctx.clearRect(
+                this.xPosition - this.radius - padding,
+                this.yPosition - this.radius - padding,
+                (this.radius + padding) * 2,
+                (this.radius + padding) * 2
+            );
+
+
             switch (direction) {
                 case this.INCREASE_Y:
-                    if (this.yPosition + this.yVelocity >= canvas.height - this.height) return;
+                    if (this.yPosition + this.yVelocity >= canvas.height - this.radius) return;
                     this.yPosition += this.yVelocity;
                     break;
                 case this.DECREASE_Y:
@@ -59,8 +72,7 @@
                     break;
             }
 
-            ctx.clearRect(this.xPosition, this.yPosition - this.yVelocity, this.width, this.height + this.yVelocity);
-            ctx.clearRect(this.xPosition, this.yPosition + this.yVelocity, this.width, this.height + this.yVelocity);
+
             this.draw();
         }
     }
@@ -176,8 +188,8 @@
             ball.xPosition += ball.xVelocity;
         }}
 
-    const paddleOne = new Paddle(50, 50, 20, 60);
-    const paddleTwo = new Paddle(350, 50, 20, 60);
+    const paddleOne = new Paddle(50, 50, 20);
+    const paddleTwo = new Paddle(350, 50, 20);
 
     paddleOne.draw();
     paddleTwo.draw();
@@ -208,14 +220,21 @@
 
     window.addEventListener("mousemove", function (event) {
         let y = event.clientY;
-        if (y >= 0 && y <= canvas.height - paddleOne.height) {
-            ctx.clearRect(paddleOne.xPosition, paddleOne.yPosition, paddleOne.width, paddleOne.height);
+        if (y >= 0 && y <= canvas.height - paddleOne.radius) {
+            const padding = 2;
+            ctx.clearRect(
+                paddleOne.xPosition - paddleOne.radius - padding,
+                paddleOne.yPosition - paddleOne.radius - padding,
+                (paddleOne.radius + padding) * 2,
+                (paddleOne.radius + padding) * 2
+            );
             paddleOne.yPosition = y;
             paddleOne.draw();
             paddleTwo.draw();
             ball.draw();
         }
     });
+
 
     var ball = new Ball(150,150,3,3,10,0);
 
