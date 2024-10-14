@@ -13,18 +13,34 @@
             left: 0;
             pointer-events: none;
         }
+
+        .information {
+            margin-top: 400px;
+            width: 400px;
+        }
+
+        .game-information {
+            width: 400px;
+            text-align: center;
+        }
     </style>
 </head>
 
 <body>
 
-<h1>Michael McDonagh</h1>
+
+    <div class="game-information">
+        <p id="display-message"></p>
+    </div>
+
+<canvas id="canvas-for-ball" width="400" height="300" style="z-index: 2"></canvas>
+<canvas id="canvas-for-ball-overlay" width="400" height="300" style="position: absolute; top: 0; left: 0;"></canvas>
+<div class="information">
+    <h1>Michael McDonagh</h1>
 <h3>G00421944@atu.ie</h3>
 <p id="paddleOneScore">P1 Score: 0</p>
 <p id="paddleTwoScore">P2 Score: 0</p>
-<canvas id="canvas-for-ball" width="400" height="300" style="z-index: 2"></canvas>
-<canvas id="canvas-for-ball-overlay" width="400" height="300" style="position: absolute; top: 0; left: 0;"></canvas>
-
+    </div>
 
 <script type="text/javascript">
     const canvas = document.getElementById("canvas-for-ball");
@@ -237,10 +253,18 @@
         if(getDistance(ball.xPosition, ball.yPosition, padOne.xPosition, padOne.yPosition) <= padOne.radius * 2){
             ball.xVelocity = ball.xVelocity * -1;
             ball.yVelocity = ball.yVelocity * -1;
+            document.getElementById("display-message").innerText = "Paddle One has been hit!";
+            setInterval(() => {
+                document.getElementById("display-message").innerText = "";
+            }, 750);
         }
         if(getDistance(ball.xPosition, ball.yPosition, padTwo.xPosition, padTwo.yPosition) <= padTwo.radius * 2){
             ball.xVelocity = ball.xVelocity * -1;
             ball.yVelocity = ball.yVelocity * -1;
+            document.getElementById("display-message").innerText = "Paddle two has been hit!";
+            setInterval(() => {
+                document.getElementById("display-message").innerText = "";
+            }, 750);
         }
     }
 
