@@ -105,8 +105,26 @@
         spheresMesh.push(mesh);
     }
 
+    // Detects if two spheres have collided
+    function detectCollision(sphere1, sphere2) {
+        const dx = sphere1.positionX - sphere2.positionX;
+        const dy = sphere1.positionY - sphere2.positionY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        return distance <= (sphere1.radius + sphere2.radius);
+    }
+
     function repeatMe() {
         requestAnimationFrame(repeatMe);
+
+        spheres.forEach(function(sphereA) {
+            spheres.forEach(function(sphereB) {
+                if(sphereA !== sphereB && detectCollision(sphereA, sphereB)){
+                    sphereA.yVelocity *= -1; // Reverse velocity on collision
+                    sphereB.yVelocity *= -1; // Reverse velocity for both spheres
+                    console.log(12);
+                }
+            })
+        })
 
         // Since the sphere class and the mesh are in different arrays but in same order, we need to also iterate
         let i = 0;
