@@ -31,21 +31,15 @@
     const sphere = new THREE.Mesh(geometry, material);
     scene.add(sphere);
 
-    function animate() {
-        requestAnimationFrame(animate);
+    function repeatMe() {
+        requestAnimationFrame(repeatMe);
 
         sphere.rotation.x += 0.01;
         sphere.rotation.y += 0.01;
 
         renderer.render(scene, camera);
     }
-    animate();
-
-    window.addEventListener('resize', () => {
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-    });
+    repeatMe();
 
 </script>
 </body>
