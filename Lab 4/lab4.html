@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas</title>
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <style type="text/css">
+        canvas {
+            border: 1px solid grey;
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        .information {
+            margin-top: 400px;
+            width: 400px;
+        }
+
+        .game-information {
+            width: 400px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div class="game-information">
+        <p id="display-message"></p>
+    </div>
+
+<canvas id="canvas-for-ball" width="400" height="300" style="z-index: 2"></canvas>
+<canvas id="canvas-for-ball-overlay" width="400" height="300" style="position: absolute; top: 0; left: 0;"></canvas>
+<div class="information">
+    <h1>Michael McDonagh</h1>
+        <h3>G00421944@atu.ie</h3>
+        <p id="paddleOneScore">P1 Score: 0</p>
+        <p id="paddleTwoScore">P2 Score: 0</p>
+    </div>
+
+<script type="text/javascript">
+    const canvas = document.getElementById("canvas-for-ball");
+    const ctx = canvas.getContext("2d");
+
+    const overlayCanvas = document.getElementById("canvas-for-ball-overlay");
+    const overlayCtx = overlayCanvas.getContext("2d");
+
+    const balls = [];
+
+    class Paddle {
+        INCREASE_Y = 0;
+        DECREASE_Y = 1;
+
+        constructor(xPosition, yPosition, radius) {
+            this.xPosition = xPosition;
+            this.yPosition = yPosition;
+            this.radius = radius;
+            this.yVelocity = 10;
+            this.gameScore = 0;
+
+        }
+
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.xPosition, this.yPosition, this.radius, 0, Math.PI * 2, false);
+            ctx.stroke();
+        }
+
+        move(direction) {
+
+            const padding = 4;
+            ctx.clearRect(
+                this.xPosition - this.radius - padding,
+                this.yPosition - this.radius - padding,
+                (this.radius + padding) * 2,
+                (this.radius + padding) * 2
+            );
+
+
+            switch (direction) {
+                case this.INCREASE_Y:
+                    if (this.yPosition + this.yVelocity >= canvas.height - this.radius) return;
+                    this.yPosition += this.yVelocity;
+                    break;
+                case this.DECREASE_Y:
+                    if (this.yPosition - this.yVelocity <= 0) return;
+                    this.yPosition -= this.yVelocity;
+                    break;
+            }
+
+
+            this.draw();
+        }
+
+        // The following method is used to increment or decrement the scoring of the paddle
+        score(incrementation){
+            let newScore = this.gameScore + incrementation
+
+            // Checks if new score is negative, if so it wont go below 0
+            if(newScore < 0){
+                this.gameScore = 0;
+                return;
+            }
+            // Increments/Decrements the game score
+            this.gameScore += incrementation;
+        }
+    }
+
+    const paddleOne = new Paddle(50, 50, 20);
+    const paddleTwo = new Paddle(350, 50, 20);
+
+    class Ball {
+        constructor(xPosition, yPosition, xVelocity, yVelocity, radius, rotation) {
+            this.xPosition = xPosition;
+            this.yPosition = yPosition;
+            this.xVelocity = xVelocity;
+            this.yVelocity = yVelocity;
+            this.radius = radius;
+            this.rotation = rotation;
+            this.bounce = 0.9;
+            this.spinspeed = 1;
+        }
+
+        draw(overlayCtx) {
+            if(overlayCtx == null) return;
+            overlayCtx.beginPath();
+            overlayCtx.arc(this.xPosition, this.yPosition, this.radius, 0, 2 * Math.PI);
+            var r = Math.random() * 255;
+            var g = Math.random() * 255;
+            var b = Math.random() * 255;
+            overlayCtx.fillStyle = `rgba(${r}, ${g}, ${b}, ${1})`;
+            overlayCtx.fill();
+            overlayCtx.stroke();
+            overlayCtx.save();
+
+            // Everytime the ball is drawn, the peace symbol is also redrawn
+            this.drawPeaceSymbol();
+
+        }
+
+        drawPeaceSymbol() {
+
+
+            /*
+            this.xPosition = The center of the ball's x coordinate
+            this.yPosition = The center of the ball's y coordinate
+            this.radius = The length of the line, we want the line to be the same length as the center to the arc
+            this.rotation = How much we want to rotate the balk by up to 360 degree's
+            this.rotation * (Math.PI / 180) = Converts our rotation number to radians is degrees * PI / 180
+             */
+            let xEnd = this.xPosition + this.radius * Math.cos(this.rotation * (Math.PI / 180));
+            let yEnd = this.yPosition + this.radius * Math.sin(this.rotation * (Math.PI / 180));
+            overlayCtx.beginPath();
+            overlayCtx.moveTo(this.xPosition, this.yPosition);
+            overlayCtx.lineTo(xEnd, yEnd);
+            overlayCtx.stroke();
+
+            xEnd = this.xPosition + this.radius * Math.cos((180 + this.rotation) * (Math.PI / 180));
+            yEnd = this.yPosition + this.radius * Math.sin((180 + this.rotation) * (Math.PI / 180));
+            overlayCtx.beginPath();
+            overlayCtx.moveTo(this.xPosition, this.yPosition);
+            overlayCtx.lineTo(xEnd, yEnd);
+            overlayCtx.stroke();
+
+            xEnd = this.xPosition + this.radius * Math.cos((60 + this.rotation) * (Math.PI / 180));
+            yEnd = this.yPosition + this.radius * Math.sin((60 + this.rotation) * (Math.PI / 180));
+            overlayCtx.beginPath();
+            overlayCtx.moveTo(this.xPosition, this.yPosition);
+            overlayCtx.lineTo(xEnd, yEnd);
+            overlayCtx.stroke();
+
+            xEnd = this.xPosition + this.radius * Math.cos((295 + this.rotation) * (Math.PI / 180));
+            yEnd = this.yPosition + this.radius * Math.sin((295 + this.rotation) * (Math.PI / 180));
+            overlayCtx.beginPath();
+            overlayCtx.moveTo(this.xPosition, this.yPosition);
+            overlayCtx.lineTo(xEnd, yEnd);
+            overlayCtx.stroke();
+
+            this.rotation += this.spinspeed;
+
+
+        }
+
+        move() {
+
+            this.yVelocity += 0.9;
+
+            // Bottom
+            if (this.yPosition + this.radius >= yBorder) {
+                this.yVelocity = -Math.abs(this.yVelocity) * this.bounce;
+                this.yPosition = yBorder - this.radius;
+            }
+
+            // Right
+            if (this.xPosition + this.radius >= xBorder) {
+                this.xVelocity = -Math.abs(this.xVelocity);
+                this.xPosition = xBorder - this.radius;
+                paddleOne.score(1);
+                paddleTwo.score(-1);
+            }
+
+            // Top
+            if (this.yPosition - this.radius <= 0) {
+                this.yVelocity = Math.abs(this.yVelocity);
+                this.yPosition = this.radius;
+            }
+
+            // Left
+            if (this.xPosition - this.radius <= 0) {
+                this.xVelocity = Math.abs(this.xVelocity);
+                this.xPosition = this.radius;
+                paddleTwo.score(1);
+                paddleOne.score(-1);
+            }
+
+            this.yPosition += this.yVelocity;
+            this.xPosition += this.xVelocity;
+        }
+    }
+
+    window.addEventListener("dblclick", function(event){
+        var ball = new Ball(150, 150, 3, 3, 10, 0);
+     balls.push(ball);
+
+      });
+
+    paddleOne.draw();
+    paddleTwo.draw();
+
+
+
+    $(document.body).on('keydown', function (e) {
+        switch (e.which) {
+            case 40:
+                paddleOne.move(paddleOne.INCREASE_Y);
+                break;
+            case 38:
+                paddleOne.move(paddleOne.DECREASE_Y);
+                break;
+            case 83:
+                paddleTwo.move(paddleTwo.INCREASE_Y);
+                break;
+            case 87:
+                paddleTwo.move(paddleTwo.DECREASE_Y);
+                break;
+            case 81:
+            balls.forEach(ball => {
+                ball.spinspeed -= 1;
+            });
+                
+                break;
+            case 69:
+            balls.forEach(ball => {
+                ball.spinspeed += 1;
+            });
+                break;
+        }
+    });
+
+
+    /**
+     *  The detectCollisions method simply checks if the distance between the ball and paddle one or two
+     *  is less than the size of the paddle diameter
+     */
+     function detectCollisions(ball, padOne, padTwo) {
+        if(getDistance(ball.xPosition, ball.yPosition, padOne.xPosition, padOne.yPosition) <= padOne.radius * 2){
+            ball.xVelocity = ball.xVelocity * -1;
+            ball.yVelocity = ball.yVelocity * -1;
+            document.getElementById("display-message").innerText = "Paddle One has been hit!";
+            setInterval(() => {
+                document.getElementById("display-message").innerText = "";
+            }, 750);
+        }
+        if(getDistance(ball.xPosition, ball.yPosition, padTwo.xPosition, padTwo.yPosition) <= padTwo.radius * 2){
+            ball.xVelocity = ball.xVelocity * -1;
+            ball.yVelocity = ball.yVelocity * -1;
+            document.getElementById("display-message").innerText = "Paddle two has been hit!";
+            setInterval(() => {
+                document.getElementById("display-message").innerText = "";
+            }, 750);
+        }
+    }
+
+    function detectCollisionsWithMouse(ball, x,y) {
+        if(getDistance(ball.xPosition, ball.yPosition,x, y) <= ball.radius * 2){
+            console.log("HIT BALL");
+            removeElement(balls, ball);
+            return true;
+        }
+    return false;
+    }
+
+    function removeElement(array, elementToRemove) {
+    array.forEach((item, index) => {
+        if (item === elementToRemove) {
+            array.splice(index, 1);
+        }
+    });
+    return array;
+}
+
+    // Returns the distance between two points
+    function getDistance(x1,y1,x2,y2) {
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+
+
+    window.addEventListener("mousemove", function (event) {
+        let y = event.clientY;
+        if (y >= 0 && y <= canvas.height - paddleOne.radius) {
+            const padding = 2;
+            ctx.clearRect(
+                paddleOne.xPosition - paddleOne.radius - padding,
+                paddleOne.yPosition - paddleOne.radius - padding,
+                (paddleOne.radius + padding) * 2,
+                (paddleOne.radius + padding) * 2
+            );
+            paddleOne.yPosition = y;
+            paddleOne.draw();
+            paddleTwo.draw();
+            overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+                balls.forEach(ball => {
+            ball.draw();
+            });
+        }
+    });
+
+    window.addEventListener("click", function(event) { 
+        let y = event.clientY;
+        let x = event.clientX;
+        if (y >= 0 && y <= canvas.height && x >= 0 && x <= canvas.width) {
+            balls.forEach(ball => {
+            if(detectCollisionsWithMouse(ball, x, y)){
+
+            }
+            });
+        }
+      });
+
+    
+    var yBorder = canvas.height - 15;
+    var xBorder = canvas.width - 15;
+
+    function repeatme() {
+    
+        overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+        balls.forEach(ball => {
+          ball.draw(overlayCtx);
+          ball.move();
+          detectCollisions(ball, paddleOne, paddleTwo);
+        });
+
+        // Updates the scoring of the game
+        document.getElementById("paddleOneScore").innerText = "P1 Score: " + paddleOne.gameScore;
+        document.getElementById("paddleTwoScore").innerText = "P2 Score: " + paddleTwo.gameScore;
+
+        // Constantly checking the collisions
+        
+        window.requestAnimationFrame(repeatme);
+        
+    }
+
+    repeatme();
+
+</script>
+
+</body>
+
+</html>

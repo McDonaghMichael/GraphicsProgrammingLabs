@@ -18,6 +18,8 @@
 
 <body>
 
+  <h1>Michael McDonagh</h1>
+  <h3>G00421944@atu.ie</h3>
 <canvas id="canvas-for-ball" width="400" height="300" style="z-index: 2"></canvas>
 <canvas id="canvas-for-ball-overlay" width="400" height="300" style="position: absolute; top: 0; left: 0;"></canvas>
 
@@ -71,8 +73,14 @@
       this.yVelocity = yVelocity;
       this.radius = radius;
       this.rotation = rotation;
+      this.bounce = 0.9;
       this.spinspeed = 1;
     }
+
+    getMaxHeight(){
+      return overlayCanvas.height * this.distanceRemainder;
+    }
+
 
     draw(overlayCtx) {
       overlayCtx.clearRect(0,0,overlayCanvas.width,overlayCanvas.height);
@@ -132,31 +140,40 @@
 
     }
     move(){
-      // When the Y Position of the Ball is more than or equal ot the edge of the border
+
+      ball.yVelocity += 0.9;
+
+      // Bottom of canvas area
       if(ball.yPosition >= yBorder){
         ball.yVelocity = ball.yVelocity * -1;
-        ball.rotation += 5; // Spin ball faster when it hits a border
+        ball.yVelocity += 0.9;
+        this.yVelocity = this.yVelocity * this.bounce;
+        this.xVelocity = this.xVelocity * this.bounce;
+        this.spinspeed *= this.bounce;
+
       }
 
-      // When the X Position of the Ball is more than or equal to the edge of the border
+      // Right of Canvas
       if(ball.xPosition >= xBorder){
         ball.xVelocity = ball.xVelocity * -1;
         ball.rotation += 5;
+
       }
 
-      // This will check if the border of the ball has hit a Y Coordinate edge
+      // Top of Canvas
       if(ball.yPosition <= ball.radius){
         ball.yVelocity = ball.yVelocity * -1;
+        ball.yVelocity -= 0.9;
         ball.rotation += 5;
       }
 
-      // This will check if the border of the ball has hit a X Coordinate edge
+      // Left of canvas
       if(ball.xPosition <= ball.radius){
         ball.xVelocity = ball.xVelocity * -1;
       }
+
       ball.yPosition += ball.yVelocity;
       ball.xPosition += ball.xVelocity;
-      ball.rotation += 5;
     }}
 
   const paddleOne = new Paddle(50, 50, 20, 60);
@@ -190,7 +207,7 @@
 
 
   window.addEventListener("mousemove", function (event) {
-    let y = event.clientY - canvas.height;
+    let y = event.clientY;
     if (y >= 0 && y <= canvas.height - paddleOne.height) {
       ctx.clearRect(paddleOne.xPosition, paddleOne.yPosition, paddleOne.width, paddleOne.height);
       paddleOne.yPosition = y;
@@ -200,7 +217,7 @@
     }
   });
 
-  var ball = new Ball(150,150,3,3,30,0);
+  var ball = new Ball(150,150,3,3,10,0);
 
   var yBorder = canvas.height - ball.radius;
   var xBorder = canvas.width - ball.radius;
