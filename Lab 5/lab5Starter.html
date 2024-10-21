@@ -52,8 +52,8 @@
     }
 
     // Here wwe will create a sphere and add it to our spheres array
-    var sphere = new Sphere(1, 32, 32, 0x0077ff, false, 0, 5);
-    spheres.push(sphere);
+    spheres.push(new Sphere(1, 32, 32, 0x0077ff, false, 0, 5));
+    spheres.push(new Sphere(1, 32, 32, 0x0077ff, false, 0, 8));
 
     // Create the light source
     var spotLight = new THREE.SpotLight(0xffffff);
@@ -63,7 +63,7 @@
 
    // Now we basically create the plane and its contents
     var planeGeometry = new THREE.PlaneGeometry(10, 10);
-    var planeMaterial = new THREE.ShadowMaterial({ opacity: 0.5 }); // Use ShadowMaterial for shadows
+    var planeMaterial = new THREE.MeshPhongMaterial({ color: 0x0077ff }); // Use MeshPhongMaterial for color
     var planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
 
     // The plan is then positioned vertically, will receive shadows aswell
