@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>CO2 Data Plot</title>
+    <title>CO₂ Data Plot</title>
     <meta charset="UTF-8">
-    <!-- Link to D3.js v5 and jQuery -->
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 <script type="text/javascript">
     $(document).ready(function() {
-        const url = "https://raw.githubusercontent.com/datasets/co2-ppm/refs/heads/main/datapackage.json";
+        const url = "https://raw.githubusercontent.com/humphs078/programming_for_data_analysis_assignment_2/refs/heads/main/datasets/fused_datasets/json/long_term_fused_data.json";
 
         $.getJSON(url, function(data) {
             plotCO2Data(data);
@@ -20,7 +19,7 @@
     });
 
     function plotCO2Data(data) {
-        const margin = { top: 20, right: 30, bottom: 30, left: 50 };
+        const margin = { top: 20, right: 30, bottom: 50, left: 60 };
         const width = 800 - margin.left - margin.right;
         const height = 400 - margin.top - margin.bottom;
 
@@ -30,21 +29,22 @@
             .append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
-        const parseTime = d3.timeParse("%Y-%m-%d");
-        const x = d3.scaleTime()
-            .domain(d3.extent(data, d => parseTime(d.date)))
+        data.forEach(d => d.year = 2023 - d.years_before_2023);
+
+        const x = d3.scaleLinear()
+            .domain(d3.extent(data, d => d.year))
             .range([0, width]);
 
         const y = d3.scaleLinear()
-            .domain([d3.min(data, d => d.value), d3.max(data, d => d.value)])
+            .domain([d3.min(data, d => d.co2_ppmv) - 10, d3.max(data, d => d.co2_ppmv) + 10])
             .range([height, 0]);
 
-        const xAxis = d3.axisBottom(x).ticks(10);
+        const xAxis = d3.axisBottom(x).ticks(10).tickFormat(d3.format("d"));
         const yAxis = d3.axisLeft(y).ticks(6);
 
         const line = d3.line()
-            .x(d => x(parseTime(d.date)))
-            .y(d => y(d.value))
+            .x(d => x(d.year))
+            .y(d => y(d.co2_ppmv))
             .curve(d3.curveMonotoneX);
 
         svg.append("g")
