@@ -30,13 +30,14 @@
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
         data.forEach(d => d.year = 2023 - d.years_before_2023);
+        const filteredData = data.filter(d => d.year >= 1923); // Last 100 years
 
         const x = d3.scaleLinear()
-            .domain(d3.extent(data, d => d.year))
+            .domain(d3.extent(filteredData, d => d.year))
             .range([0, width]);
 
         const y = d3.scaleLinear()
-            .domain([d3.min(data, d => d.co2_ppmv) - 10, d3.max(data, d => d.co2_ppmv) + 10])
+            .domain([d3.min(filteredData, d => d.co2_ppmv) - 10, d3.max(filteredData, d => d.co2_ppmv) + 10])
             .range([height, 0]);
 
         const xAxis = d3.axisBottom(x).ticks(10).tickFormat(d3.format("d"));
@@ -57,7 +58,7 @@
             .call(yAxis);
 
         svg.append("path")
-            .datum(data)
+            .datum(filteredData)
             .attr("class", "line")
             .attr("fill", "none")
             .attr("stroke", "red")
