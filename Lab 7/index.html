@@ -30,6 +30,15 @@
             .append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
+        const parseTime = d3.timeParse("%Y-%m-%d");
+        const x = d3.scaleTime()
+            .domain(d3.extent(data, d => parseTime(d.date)))
+            .range([0, width]);
+
+        const y = d3.scaleLinear()
+            .domain([d3.min(data, d => d.value), d3.max(data, d => d.value)])
+            .range([height, 0]);
+
 
 
     }
