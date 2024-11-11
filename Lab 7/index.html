@@ -39,8 +39,53 @@
             .domain([d3.min(data, d => d.value), d3.max(data, d => d.value)])
             .range([height, 0]);
 
+        const xAxis = d3.axisBottom(x).ticks(10);
+        const yAxis = d3.axisLeft(y).ticks(6);
 
+        const line = d3.line()
+            .x(d => x(parseTime(d.date)))
+            .y(d => y(d.value))
+            .curve(d3.curveMonotoneX);
 
+        svg.append("g")
+            .attr("class", "x-axis")
+            .attr("transform", `translate(0,${height})`)
+            .call(xAxis);
+
+        svg.append("g")
+            .attr("class", "y-axis")
+            .call(yAxis);
+
+        svg.append("path")
+            .datum(data)
+            .attr("class", "line")
+            .attr("fill", "none")
+            .attr("stroke", "red")
+            .attr("stroke-width", 2)
+            .attr("d", line);
+
+        svg.append("text")
+            .attr("x", width / 2)
+            .attr("y", -10)
+            .attr("text-anchor", "middle")
+            .style("font-size", "16px")
+            .style("font-weight", "bold")
+            .text("Atmospheric CO₂ Concentration Over Time");
+
+        svg.append("text")
+            .attr("x", width / 2)
+            .attr("y", height + margin.bottom - 10)
+            .attr("text-anchor", "middle")
+            .style("font-size", "12px")
+            .text("Year");
+
+        svg.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", -margin.left + 15)
+            .attr("x", -height / 2)
+            .attr("text-anchor", "middle")
+            .style("font-size", "12px")
+            .text("CO₂ Concentration (ppm)");
     }
 </script>
 </body>
