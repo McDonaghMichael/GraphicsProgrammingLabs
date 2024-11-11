@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>CO₂ Data Plot</title>
+    <title>CO₂, Temperature Anomaly, and Methane Data Plot</title>
     <meta charset="UTF-8">
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -30,22 +30,42 @@
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
         data.forEach(d => d.year = 2023 - d.years_before_2023);
-        const filteredData = data.filter(d => d.year >= 1923); // Last 100 years
+        const filteredData = data.filter(d => d.year >= 1923);
 
         const x = d3.scaleLinear()
             .domain(d3.extent(filteredData, d => d.year))
             .range([0, width]);
 
-        const y = d3.scaleLinear()
+        const yCO2 = d3.scaleLinear()
             .domain([d3.min(filteredData, d => d.co2_ppmv) - 10, d3.max(filteredData, d => d.co2_ppmv) + 10])
             .range([height, 0]);
 
-        const xAxis = d3.axisBottom(x).ticks(10).tickFormat(d3.format("d"));
-        const yAxis = d3.axisLeft(y).ticks(6);
+        const yTemp = d3.scaleLinear()
+            .domain([d3.min(filteredData, d => d.temp_anomaly) - 0.1, d3.max(filteredData, d => d.temp_anomaly) + 0.1])
+            .range([height, 0]);
 
-        const line = d3.line()
+        const yCH4 = d3.scaleLinear()
+            .domain([d3.min(filteredData, d => d.ch4_ppb) - 10, d3.max(filteredData, d => d.ch4_ppb) + 10])
+            .range([height, 0]);
+
+        const xAxis = d3.axisBottom(x).ticks(10).tickFormat(d3.format("d"));
+        const yAxisCO2 = d3.axisLeft(yCO2).ticks(6);
+        const yAxisTemp = d3.axisRight(yTemp).ticks(6);
+        const yAxisCH4 = d3.axisRight(yCH4).ticks(6);
+
+        const lineCO2 = d3.line()
             .x(d => x(d.year))
-            .y(d => y(d.co2_ppmv))
+            .y(d => yCO2(d.co2_ppmv))
+            .curve(d3.curveMonotoneX);
+
+        const lineTemp = d3.line()
+            .x(d => x(d.year))
+            .y(d => yTemp(d.temp_anomaly))
+            .curve(d3.curveMonotoneX);
+
+        const lineCH4 = d3.line()
+            .x(d => x(d.year))
+            .y(d => yCH4(d.ch4_ppb))
             .curve(d3.curveMonotoneX);
 
         svg.append("g")
@@ -54,16 +74,42 @@
             .call(xAxis);
 
         svg.append("g")
-            .attr("class", "y-axis")
-            .call(yAxis);
+            .attr("class", "y-axis-co2")
+            .call(yAxisCO2);
+
+        svg.append("g")
+            .attr("class", "y-axis-temp")
+            .attr("transform", `translate(${width},0)`)
+            .call(yAxisTemp);
+
+        svg.append("g")
+            .attr("class", "y-axis-ch4")
+            .attr("transform", `translate(${width},0)`)
+            .call(yAxisCH4);
 
         svg.append("path")
             .datum(filteredData)
-            .attr("class", "line")
+            .attr("class", "line-co2")
             .attr("fill", "none")
             .attr("stroke", "red")
             .attr("stroke-width", 2)
-            .attr("d", line);
+            .attr("d", lineCO2);
+
+        svg.append("path")
+            .datum(filteredData)
+            .attr("class", "line-temp")
+            .attr("fill", "none")
+            .attr("stroke", "blue")
+            .attr("stroke-width", 2)
+            .attr("d", lineTemp);
+
+        svg.append("path")
+            .datum(filteredData)
+            .attr("class", "line-ch4")
+            .attr("fill", "none")
+            .attr("stroke", "green")
+            .attr("stroke-width", 2)
+            .attr("d", lineCH4);
 
         svg.append("text")
             .attr("x", width / 2)
@@ -71,7 +117,7 @@
             .attr("text-anchor", "middle")
             .style("font-size", "16px")
             .style("font-weight", "bold")
-            .text("Atmospheric CO₂ Concentration Over Time");
+            .text("Atmospheric CO₂, Temperature Anomaly, and Methane Concentration Over Time");
 
         svg.append("text")
             .attr("x", width / 2)
@@ -87,6 +133,53 @@
             .attr("text-anchor", "middle")
             .style("font-size", "12px")
             .text("CO₂ Concentration (ppm)");
+
+        svg.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", -margin.left + 15)
+            .attr("x", width + margin.right / 2)
+            .attr("text-anchor", "middle")
+            .style("font-size", "12px")
+            .text("Temperature Anomaly (°C)");
+
+        svg.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", -margin.left + 15)
+            .attr("x", width + margin.right + 40)
+            .attr("text-anchor", "middle")
+            .style("font-size", "12px")
+            .text("Methane Concentration (ppb)");
+
+        const zoom = d3.zoom()
+            .scaleExtent([1, 10])
+            .translateExtent([[0, 0], [width, height]])
+            .extent([[0, 0], [width, height]])
+            .on("zoom", function(event) {
+                const newX = event.transform.rescaleX(x);
+                svg.select(".x-axis").call(xAxis.scale(newX));
+                svg.selectAll(".line-co2").attr("d", lineCO2.x(d => newX(d.year)));
+                svg.selectAll(".line-temp").attr("d", lineTemp.x(d => newX(d.year)));
+                svg.selectAll(".line-ch4").attr("d", lineCH4.x(d => newX(d.year)));
+            });
+
+        svg.call(zoom);
+
+        const brush = d3.brushX()
+            .extent([[0, 0], [width, height]])
+            .on("brush end", function(event) {
+                if (event.selection) {
+                    const [x0, x1] = event.selection;
+                    x.domain([x.invert(x0), x.invert(x1)]);
+                    svg.select(".x-axis").call(xAxis);
+                    svg.selectAll(".line-co2").attr("d", lineCO2.x(d => x(d.year)));
+                    svg.selectAll(".line-temp").attr("d", lineTemp.x(d => x(d.year)));
+                    svg.selectAll(".line-ch4").attr("d", lineCH4.x(d => x(d.year)));
+                }
+            });
+
+        svg.append("g")
+            .attr("class", "brush")
+            .call(brush);
     }
 </script>
 </body>
