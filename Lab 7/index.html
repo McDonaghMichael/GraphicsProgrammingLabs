@@ -39,7 +39,7 @@
         // Add a computed 'year' property to the data
         data.forEach(d => d.year = 2023 - d.years_before_2023);
         // Filter the data to include only records from 1923 onwards
-        const filteredData = data.filter(d => d.year >= 1923);
+        const filteredData = data.filter(d => d.year >= -800000);
 
         // Define a linear scale for the x-axis (years)
         const x = d3.scaleLinear()
