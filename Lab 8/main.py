@@ -13,6 +13,7 @@ blurred_image_13 = cv2.GaussianBlur(gray_image,(13, 13),3)
 
 sobel_x = cv2.Sobel(blurred_image_13,cv2.CV_64F,1,0,ksize=5)
 sobel_y = cv2.Sobel(blurred_image_13,cv2.CV_64F,0,1,ksize=5)
+canny = cv2.Canny(blurred_gray,100,2)
 
 rows = 3
 cols = 3
@@ -35,6 +36,9 @@ plt.title("Sobel X"), plt.xticks([]), plt.yticks([])
 
 plt.subplot(cols, cols,6),plt.imshow(sobel_y, cmap = 'gray')
 plt.title("Sobel Y"), plt.xticks([]), plt.yticks([])
+
+plt.subplot(cols, cols,7),plt.imshow(canny, cmap = 'gray')
+plt.title("Canny"), plt.xticks([]), plt.yticks([])
 
 
 plt.show()
