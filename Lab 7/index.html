@@ -8,51 +8,71 @@
 </head>
 <body>
 <script type="text/javascript">
+    // Ensure the DOM is fully loaded before running scripts
     $(document).ready(function() {
+        // URL of the JSON data file
         const url = "https://raw.githubusercontent.com/humphs078/programming_for_data_analysis_assignment_2/refs/heads/main/datasets/fused_datasets/json/long_term_fused_data.json";
 
+        // Fetch JSON data from the provided URL
         $.getJSON(url, function(data) {
-            plotCO2Data(data);
+            plotCO2Data(data); // Call the plotting function with the retrieved data
+            console.log(data); // Log the data to the console for debugging
         }).fail(function() {
             console.error("An error occurred while trying to download the JSON file.");
         });
     });
 
+    // Function to plot the CO2, temperature anomaly, and methane data
     function plotCO2Data(data) {
+        // Define margins and dimensions for the SVG container
         const margin = { top: 20, right: 30, bottom: 50, left: 60 };
         const width = 800 - margin.left - margin.right;
         const height = 400 - margin.top - margin.bottom;
 
+        // Create an SVG element and append a group element for the plot
         const svg = d3.select("body").append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
+        // Add a computed 'year' property to the data
         data.forEach(d => d.year = 2023 - d.years_before_2023);
+        // Filter the data to include only records from 1923 onwards
         const filteredData = data.filter(d => d.year >= 1923);
 
+        // Define a linear scale for the x-axis (years)
         const x = d3.scaleLinear()
-            .domain(d3.extent(filteredData, d => d.year))
-            .range([0, width]);
+            .domain(d3.extent(filteredData, d => d.year)) // Input: minimum and maximum year from the dataset
+            .range([0, width]); // Output: maps these years to pixel values from 0 (left) to the chart's width (right)
 
+        // Define a linear scale for the y-axis (CO₂ concentration)
         const yCO2 = d3.scaleLinear()
-            .domain([d3.min(filteredData, d => d.co2_ppmv) - 10, d3.max(filteredData, d => d.co2_ppmv) + 10])
+            .domain([d3.min(filteredData, d => d.co2_ppmv) - 10, d3.max(filteredData, d => d.co2_ppmv) + 0])
+            // Input: minimum and maximum CO₂ concentration with padding of ±10 for better visualization
             .range([height, 0]);
+        // Output: maps CO₂ values to pixel positions from the bottom (height) to the top (0)
 
+        // Define a linear scale for the y-axis (temperature anomaly)
         const yTemp = d3.scaleLinear()
             .domain([d3.min(filteredData, d => d.temp_anomaly) - 0.1, d3.max(filteredData, d => d.temp_anomaly) + 0.1])
+            // Input: minimum and maximum temperature anomaly with ±0.1 padding for better visualization
             .range([height, 0]);
+        // Output: maps temperature values to pixel positions from the bottom (height) to the top (0)
 
+        // Define a linear scale for the y-axis (methane concentration)
         const yCH4 = d3.scaleLinear()
             .domain([d3.min(filteredData, d => d.ch4_ppb) - 10, d3.max(filteredData, d => d.ch4_ppb) + 10])
+            // Input: minimum and maximum methane concentration with ±10 padding for better visualization
             .range([height, 0]);
+        // Output: maps methane values to pixel positions from the bottom (height) to the top (0)
 
+
+        // Create axis elements
         const xAxis = d3.axisBottom(x).ticks(10).tickFormat(d3.format("d"));
         const yAxisCO2 = d3.axisLeft(yCO2).ticks(6);
-        const yAxisTemp = d3.axisRight(yTemp).ticks(6);
-        const yAxisCH4 = d3.axisRight(yCH4).ticks(6);
 
+        // Define line generators for each dataset
         const lineCO2 = d3.line()
             .x(d => x(d.year))
             .y(d => yCO2(d.co2_ppmv))
@@ -68,25 +88,18 @@
             .y(d => yCH4(d.ch4_ppb))
             .curve(d3.curveMonotoneX);
 
+        // Add the x-axis to the SVG
         svg.append("g")
             .attr("class", "x-axis")
             .attr("transform", `translate(0,${height})`)
             .call(xAxis);
 
+        // Add the y-axis for CO2 data
         svg.append("g")
             .attr("class", "y-axis-co2")
             .call(yAxisCO2);
 
-        svg.append("g")
-            .attr("class", "y-axis-temp")
-            .attr("transform", `translate(${width},0)`)
-            .call(yAxisTemp);
-
-        svg.append("g")
-            .attr("class", "y-axis-ch4")
-            .attr("transform", `translate(${width},0)`)
-            .call(yAxisCH4);
-
+        // Add lines to represent CO2, temperature anomaly, and methane data
         svg.append("path")
             .datum(filteredData)
             .attr("class", "line-co2")
@@ -111,6 +124,7 @@
             .attr("stroke-width", 2)
             .attr("d", lineCH4);
 
+        // Add a title to the chart
         svg.append("text")
             .attr("x", width / 2)
             .attr("y", -10)
@@ -119,6 +133,7 @@
             .style("font-weight", "bold")
             .text("Atmospheric CO₂, Temperature Anomaly, and Methane Concentration Over Time");
 
+        // Add a label to the x-axis
         svg.append("text")
             .attr("x", width / 2)
             .attr("y", height + margin.bottom - 10)
@@ -126,6 +141,7 @@
             .style("font-size", "12px")
             .text("Year");
 
+        // Add a label to the y-axis for CO2
         svg.append("text")
             .attr("transform", "rotate(-90)")
             .attr("y", -margin.left + 15)
@@ -134,42 +150,28 @@
             .style("font-size", "12px")
             .text("CO₂ Concentration (ppm)");
 
-        svg.append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("y", -margin.left + 15)
-            .attr("x", width + margin.right / 2)
-            .attr("text-anchor", "middle")
-            .style("font-size", "12px")
-            .text("Temperature Anomaly (°C)");
-
-        svg.append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("y", -margin.left + 15)
-            .attr("x", width + margin.right + 40)
-            .attr("text-anchor", "middle")
-            .style("font-size", "12px")
-            .text("Methane Concentration (ppb)");
-
+        // Implement zoom functionality for the chart
         const zoom = d3.zoom()
-            .scaleExtent([1, 10])
+            .scaleExtent([1, 10]) // Define the zoom range
             .translateExtent([[0, 0], [width, height]])
             .extent([[0, 0], [width, height]])
             .on("zoom", function(event) {
-                const newX = event.transform.rescaleX(x);
-                svg.select(".x-axis").call(xAxis.scale(newX));
-                svg.selectAll(".line-co2").attr("d", lineCO2.x(d => newX(d.year)));
-                svg.selectAll(".line-temp").attr("d", lineTemp.x(d => newX(d.year)));
-                svg.selectAll(".line-ch4").attr("d", lineCH4.x(d => newX(d.year)));
+                const newX = event.transform.rescaleX(x); // Update x-axis scale
+                svg.select(".x-axis").call(xAxis.scale(newX)); // Redraw x-axis
+                svg.selectAll(".line-co2").attr("d", lineCO2.x(d => newX(d.year))); // Update CO2 line
+                svg.selectAll(".line-temp").attr("d", lineTemp.x(d => newX(d.year))); // Update Temp line
+                svg.selectAll(".line-ch4").attr("d", lineCH4.x(d => newX(d.year))); // Update CH4 line
             });
 
         svg.call(zoom);
 
+        // Add a brush feature for selecting data ranges
         const brush = d3.brushX()
             .extent([[0, 0], [width, height]])
             .on("brush end", function(event) {
                 if (event.selection) {
                     const [x0, x1] = event.selection;
-                    x.domain([x.invert(x0), x.invert(x1)]);
+                    x.domain([x.invert(x0), x.invert(x1)]); // Update x-axis domain based on selection
                     svg.select(".x-axis").call(xAxis);
                     svg.selectAll(".line-co2").attr("d", lineCO2.x(d => x(d.year)));
                     svg.selectAll(".line-temp").attr("d", lineTemp.x(d => x(d.year)));
