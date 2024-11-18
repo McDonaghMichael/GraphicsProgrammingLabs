@@ -16,11 +16,11 @@ plt.title('Original'), plt.xticks([]), plt.yticks([])
 plt.subplot(cols, cols,2),plt.imshow(gray_image, cmap = 'gray')
 plt.title("Gray Scale"), plt.xticks([]), plt.yticks([])
 
-plt.subplot(cols, cols,3),plt.imshow(cv2.GaussianBlur(img,(3, 3),3), cmap = 'gray')
-plt.title("Blur Scale"), plt.xticks([]), plt.yticks([])
+plt.subplot(cols, cols,3),plt.imshow(cv2.GaussianBlur(gray_image,(3, 3),3), cmap = 'gray')
+plt.title("3x3"), plt.xticks([]), plt.yticks([])
 
-plt.subplot(cols, cols,4),plt.imshow(cv2.GaussianBlur(img,(13, 13),3), cmap = 'gray')
-plt.title("Blur Scale"), plt.xticks([]), plt.yticks([])
+plt.subplot(cols, cols,4),plt.imshow(cv2.GaussianBlur(gray_image,(13, 13),3), cmap = 'gray')
+plt.title("13x13"), plt.xticks([]), plt.yticks([])
 
 
 plt.show()
