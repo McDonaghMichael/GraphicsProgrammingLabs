@@ -10,7 +10,7 @@ cols = 3 # How much columns in our popup
 
 gray_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-imgHarris = gray_image.copy()
+imgHarris = img.copy()
 blockSize = 2
 aperture_size = 3
 k = 0.04
@@ -18,12 +18,24 @@ dst = cv2.cornerHarris(gray_image, blockSize, aperture_size, k)
 threshold = 0.04; 
 B = 0
 G = 0
-R = 0
+R = 255
 
 for i in range(len(dst)):
     for j in range(len(dst[i])):
         if dst[i][j] > (threshold*dst.max()):
             cv2.circle(imgHarris,(j,i),3,(B, G, R),-1)
+
+imgShiTomasi = img.copy()
+
+maxCorners = 100
+qualityLevel = 0.01
+minDistance = 10
+corners = cv2.goodFeaturesToTrack(gray_image,maxCorners,qualityLevel,minDistance)
+corners = np.int0(corners)
+
+for i in corners:
+    x,y = i.ravel()
+    cv2.circle(imgShiTomasi,(x,y),3,(B, G, R),-1)
 
 # Original Image
 plt.subplot(cols, cols,1)
@@ -47,8 +59,8 @@ plt.xticks([])
 plt.yticks([])
 
 plt.subplot(cols, cols,4)
-plt.imshow(cv2.cvtColor(imgHarris, cv2.COLOR_BGR2RGB))
-plt.title("Harris Corners")
+plt.imshow(cv2.cvtColor(imgShiTomasi, cv2.COLOR_BGR2RGB))
+plt.title("Shi Tomasi")
 plt.xticks([])
 plt.yticks([])
 
