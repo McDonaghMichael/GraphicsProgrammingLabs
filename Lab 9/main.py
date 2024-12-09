@@ -37,6 +37,19 @@ for i in corners:
     x,y = i.ravel()
     cv2.circle(imgShiTomasi,(x,y),3,(B, G, R),-1)
 
+
+orbImage = cv2.imread('ATU1.jpg', cv2.IMREAD_GRAYSCALE)
+ 
+# Initiate ORB detector
+orb = cv2.ORB_create()
+ 
+# find the keypoints with ORB
+kp = orb.detect(orbImage,None)
+ 
+# compute the descriptors with ORB
+kp, des = orb.compute(orbImage, kp)
+
+
 # Original Image
 plt.subplot(cols, cols,1)
 plt.imshow(img, cmap = 'gray')
@@ -61,6 +74,12 @@ plt.yticks([])
 plt.subplot(cols, cols,4)
 plt.imshow(cv2.cvtColor(imgShiTomasi, cv2.COLOR_BGR2RGB))
 plt.title("Shi Tomasi")
+plt.xticks([])
+plt.yticks([])
+
+plt.subplot(cols, cols,5)
+plt.imshow(cv2.drawKeypoints(orbImage, kp, None, color=(0,255,0), flags=0))
+plt.title("ORB Image")
 plt.xticks([])
 plt.yticks([])
 
