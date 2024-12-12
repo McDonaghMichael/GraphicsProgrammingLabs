@@ -31,6 +31,24 @@ while cap.isOpened():
             track.append((float(x), float(y)))  
           
             
+            # Limit the track history to the last 30 positions
+            if len(track) > 30:
+                track.pop(0)
+            
+            # Prepare the points for drawing a polyline of the track path
+            points = np.hstack(track).astype(np.int32).reshape((-1, 1, 2))
+
+            # Draw the polyline representing the object's movement path
+            cv2.polylines(annotated_frame, [points], isClosed=False, color=(230, 230, 230), thickness=10)
+
+            # Placeholder array for tracking purposes (unused in this code)
+            empt = np.array([[0, 0]])
+
+            # Calculate the difference between the first and last points in the track 
+            difference = np.array(points[0] - points[-1])
+            
+            print(difference)
+            
         cv2.namedWindow('YOLOv11 Tracking', cv2.WINDOW_KEEPRATIO)
         cv2.imshow("YOLOv11 Tracking", annotated_frame)
         window = cv2.resizeWindow('YOLOv11 Tracking', 1240, 700)
